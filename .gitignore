@@ -1,10 +1,8 @@
 <<<<<<< HEAD
-./src/main/resources
-!.mvn/wrapper/maven-wrapper.jar
-./src/main
-/src/main/java/com/volunteer/commonweal/constants/UIConst.java
-
-./src/
+src/main/resources
+.mvn/wrapper/maven-wrapper.jar
+src/main/java/com/volunteer/commonweal/constants/UIConst.java
+*.DS_Store
 ### STS ###
 .apt_generated
 .classpath
