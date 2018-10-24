@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-src/main/resources
+src/main/resources/*
 .mvn/wrapper/maven-wrapper.jar
 src/main/java/com/volunteer/commonweal/constants/UIConst.java
 *.DS_Store
