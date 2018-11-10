@@ -1,14 +1,8 @@
 package com.volunteer.commonweal.services.dataBaseServices;
 
-import com.volunteer.commonweal.models.implementModels.homePageModels.Activity;
-import com.volunteer.commonweal.models.implementModels.homePageModels.Application;
-import com.volunteer.commonweal.models.implementModels.homePageModels.EmailVerifyToken;
-import com.volunteer.commonweal.models.implementModels.homePageModels.User;
+import com.volunteer.commonweal.models.implementModels.homePageModels.*;
 import com.volunteer.commonweal.models.implementModels.resourcesSharingModels.*;
-import com.volunteer.commonweal.repositories.homePageRepositories.ActivityRepository;
-import com.volunteer.commonweal.repositories.homePageRepositories.ApplicationRepository;
-import com.volunteer.commonweal.repositories.homePageRepositories.EmailVerifyTokenRepository;
-import com.volunteer.commonweal.repositories.homePageRepositories.UserRepository;
+import com.volunteer.commonweal.repositories.homePageRepositories.*;
 import com.volunteer.commonweal.repositories.resourcesSharingServices.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,10 +28,15 @@ public class SimpleDBService {
     private MajorRepository majorRepository;
     private QuestionRepository questionRepository;
     private VideoClassRepository videoClassRepository;
+    private OrganizationRepository organizationRepository;
+    private OrganizationApplyRepository organizationApplyRepository;
+    private OrganizationFoundationRepository organizationFoundationRepository;
+
     @Autowired
     public SimpleDBService(ActivityRepository activityRepository, ApplicationRepository applicationRepository, EmailVerifyTokenRepository emailVerifyTokenRepository, UserRepository userRepository
         , CollegeRepository collegeRepository, ExperienceRepository experienceRepository, GuideRepository guideRepository, KnowledgeRepository knowledgeRepository, MajorRepository majorRepository
-        , QuestionRepository questionRepository, VideoClassRepository videoClassRepository){
+        , QuestionRepository questionRepository, VideoClassRepository videoClassRepository, OrganizationRepository organizationRepository, OrganizationApplyRepository organizationApplyRepository
+        , OrganizationFoundationRepository organizationFoundationRepository){
         this.activityRepository = activityRepository;
         this.applicationRepository = applicationRepository;
         this.emailVerifyTokenRepository = emailVerifyTokenRepository;
@@ -49,7 +48,11 @@ public class SimpleDBService {
         this.majorRepository = majorRepository;
         this.questionRepository = questionRepository;
         this.videoClassRepository = videoClassRepository;
+        this.organizationRepository = organizationRepository;
+        this.organizationApplyRepository = organizationApplyRepository;
+        this.organizationFoundationRepository = organizationFoundationRepository;
     }
+
     //activity的操作
     public Optional<Activity> findOneActivityByActivityId(String id){
         return activityRepository.findOneById(id);
@@ -265,5 +268,41 @@ public class SimpleDBService {
     }
     public VideoClass insertVideoClass(VideoClass videoClass){
         return videoClassRepository.insert(videoClass);
+    }
+
+    //organization的操作
+    public Optional<Organization> findOneOrganizationById(String id){
+        return organizationRepository.findOneById(id);
+    }
+    public Optional<Organization> findOneOrganizationByName(String name){
+        return organizationRepository.findOneByName(name);
+    }
+    public Stream<Organization> findOrganizationByLeaderId(String leaderId){
+        return organizationRepository.findByLeaderId(leaderId);
+    }
+
+    //organizationApply的操作
+    public Optional<OrganizationApply> findOrganizationApplyOneById(String id){
+        return organizationApplyRepository.findOneById(id);
+    }
+    public Stream<OrganizationApply> findOrganizationApplyByOrganizationIdAndStatus(String organizationId, int status){
+        return organizationApplyRepository.findByOrganizationIdAndStatus(organizationId, status);
+    }
+    public Stream<OrganizationApply> findOrganizationApplyByOrganizationId(String organizationId){
+        return organizationApplyRepository.findByOrganizationId(organizationId);
+    }
+    public Optional<OrganizationApply> findOrganizationApplyByOrganizationIdAndUserIdAndStatus(String organizationId, String userId, int status){
+        return organizationApplyRepository.findByOrganizationIdAndUserIdAndStatus(organizationId, userId, status);
+    }
+
+    //organizationFoundation的操作
+    public Optional<OrganizationFoundation> findOneOrganizationFoundationById(String id){
+        return organizationFoundationRepository.findOneById(id);
+    }
+    public Stream<OrganizationFoundation> findOrganizationFoundationByLeaderId(String leaderId){
+        return organizationFoundationRepository.findByLeaderId(leaderId);
+    }
+    public Optional<OrganizationFoundation> findOneOrganizationFoundationByName(String name){
+        return organizationFoundationRepository.findOneByName(name);
     }
 }

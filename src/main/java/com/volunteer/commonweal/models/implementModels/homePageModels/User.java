@@ -40,6 +40,12 @@ public class User extends BaseModel {
 
     private List<String> activitiesId = new ArrayList(); //参加的活动列表
 
+    private String organization;
+
+    public String getOrganization() {
+        return organization;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -127,6 +133,10 @@ public class User extends BaseModel {
 
     public void setPassword(String password) throws EncryptException {
         this.password = EncryptionUtils.userPasswordEncrypt("SHA1", password);
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
     public boolean isRightPassword(String password) throws EncryptException {
