@@ -34,14 +34,14 @@ public class Activity extends BaseModel {
     private String type;//类别
     @NotNull
     private String lasting;//持续时间
-    private String organization;
+    private String organizationId;
     private String picUrl;//图片封面路径
     private byte[] comment;//活动总结
     private Boolean show;//是否展示
     private List<String> pictures;//展示图片集合路径
 
-    public String getOrganization() {
-        return organization;
+    public String getOrganizationId() {
+        return organizationId;
     }
 
     public String getType(){
@@ -138,8 +138,8 @@ public class Activity extends BaseModel {
         this.picUrl = picUrl;
     }
 
-    public void setOrganization(String organization) {
-        this.organization = organization;
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
     }
 
     @Override

@@ -16,6 +16,7 @@ public class DataBaseConst {
     public static final String ORGANIZATION_DATABASE_NAME = "organizations";
     public static final String ORGANIZATIONFOUNDATION_DATABASE_NAME = "organizationFoundations";
     public static final String ORGANIZATIONAPPLY_DATABASE_NAME = "organizationApplies";
+    public static final String ACTIVITYAPPLY_DATABASE_NAME = "activityApplies";
     public static final int MAX_USER_ACTIVITY_NUMBER = 5;//当前所能参加活动的最大数目
     public static final int MAX_ACTIVITY_MEMBER_NUMBER = 20;//一个活动所允许的最大人数限制
 }

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Document(collection = DataBaseConst.ORGANIZATIONFOUNDATION_DATABASE_NAME)
 public class OrganizationFoundation extends BaseModel {
-    @Indexed(unique = true)
+    @Indexed
     @NotNull
     private String name;
 

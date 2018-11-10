@@ -81,6 +81,9 @@ public class SimpleDBService {
     public List<Activity> findAllActivity(){
         return activityRepository.findAll();
     }
+    public Stream<Activity> findActivityByOrganizationId(String organizationId){
+        return activityRepository.findByOrganizationId(organizationId);
+    }
 
     //application的操作
     public Optional<Application> findOneApplicationByApplicationId(String applicationId){

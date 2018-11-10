@@ -10,7 +10,7 @@ import java.util.List;
 
 @Document(collection = DataBaseConst.ORGANIZATION_DATABASE_NAME)
 public class Organization extends BaseModel {
-    @Indexed(unique = true)
+    @Indexed
     @NotNull
     private String name;
 
