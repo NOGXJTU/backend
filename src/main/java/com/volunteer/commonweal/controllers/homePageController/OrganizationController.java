@@ -438,7 +438,33 @@ public class OrganizationController {
     //退出组织
     @ApiOperation(value = "退出组织", notes = "")
     @RequestMapping(value = "/apply/quit", method = RequestMethod.POST)
-    public ResponseEntity quitOrganization(){
-        return null;
+    public ResponseEntity quitOrganization(@RequestBody QuitOrganizationData data, HttpSession session) throws AuthException {
+        String organizationId = data.organizationId;
+        Optional<String> userId = organizationService.getUserIdFromSession(session);
+        if(Objects.isNull(organizationId)){
+            throw new AuthException(1011, config.getExceptionsMap().get(1011));
+        }
+        if (!userId.isPresent()){
+            throw new AuthException(1021, config.getExceptionsMap().get(1021));
+        }
+        Optional<User> userFound = simpleDBService.findOneUserById(userId.get());
+        if(!userFound.isPresent()){
+            throw new AuthException(1031, config.getExceptionsMap().get(1031));
+        }
+
+        Optional<Organization> organizationFound = simpleDBService.findOneOrganizationById(organizationId);
+        if(!organizationFound.isPresent()){
+            throw new AuthException(1048, config.getExceptionsMap().get(1048));
+        }
+        Organization organization = organizationFound.get();
+        User user = userFound.get();
+        List<String> organizationList = user.getOrganizations();
+        organizationList.remove(organizationId);
+        List<String> userList = organization.getUsers();
+        userList.remove(userId.get());
+
+        simpleDBService.saveOrganization(organization);
+
+        return new ResponseEntity(simpleDBService.saveUser(user), HttpStatus.OK);
     }
 }
