@@ -299,7 +299,7 @@ public class SimpleDBService {
     }
 
     //organizationApply的操作
-    public Optional<OrganizationApply> findOrganizationApplyOneById(String id){
+    public Optional<OrganizationApply> findOneOrganizationApplyById(String id){
         return organizationApplyRepository.findOneById(id);
     }
     public Stream<OrganizationApply> findOrganizationApplyByOrganizationIdAndStatus(String organizationId, int status){
@@ -308,8 +308,8 @@ public class SimpleDBService {
     public Stream<OrganizationApply> findOrganizationApplyByOrganizationId(String organizationId){
         return organizationApplyRepository.findByOrganizationId(organizationId);
     }
-    public Optional<OrganizationApply> findOrganizationApplyByOrganizationIdAndUserIdAndStatus(String organizationId, String userId, int status){
-        return organizationApplyRepository.findByOrganizationIdAndUserIdAndStatus(organizationId, userId, status);
+    public Optional<OrganizationApply> findOneOrganizationApplyByOrganizationIdAndUserIdAndStatus(String organizationId, String userId, int status){
+        return organizationApplyRepository.findOneByOrganizationIdAndUserIdAndStatus(organizationId, userId, status);
     }
     public OrganizationApply saveOrganizationApply(OrganizationApply organizationApply){
         return organizationApplyRepository.save(organizationApply);

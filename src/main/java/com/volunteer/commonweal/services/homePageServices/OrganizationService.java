@@ -66,4 +66,8 @@ public class OrganizationService {
         }
         return (organizationFoundationFound.get().getStatus() == 0);
     }
+
+    public Optional<String> getUserIdFromSession(HttpSession session){
+        return userService.getUserIdFromSession(session);
+    }
 }

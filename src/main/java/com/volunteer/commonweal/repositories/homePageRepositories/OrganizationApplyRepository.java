@@ -11,5 +11,5 @@ public interface OrganizationApplyRepository extends MongoRepository<Organizatio
     public Optional<OrganizationApply> findOneById(String id);
     public Stream<OrganizationApply> findByOrganizationIdAndStatus(String organizationId, int status);
     public Stream<OrganizationApply> findByOrganizationId(String organizationId);
-    public Optional<OrganizationApply> findByOrganizationIdAndUserIdAndStatus(String organizationId, String userId, int status);
+    public Optional<OrganizationApply> findOneByOrganizationIdAndUserIdAndStatus(String organizationId, String userId, int status);
 }

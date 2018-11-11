@@ -3,11 +3,9 @@ package com.volunteer.commonweal.services.dataBaseServices;
 
 import com.volunteer.commonweal.models.exceptionModels.AuthException;
 import com.volunteer.commonweal.models.implementModels.homePageModels.Activity;
+import com.volunteer.commonweal.models.implementModels.homePageModels.Organization;
 import com.volunteer.commonweal.models.implementModels.homePageModels.User;
-import com.volunteer.commonweal.repositories.homePageRepositories.ActivityRepository;
-import com.volunteer.commonweal.repositories.homePageRepositories.ApplicationRepository;
-import com.volunteer.commonweal.repositories.homePageRepositories.EmailVerifyTokenRepository;
-import com.volunteer.commonweal.repositories.homePageRepositories.UserRepository;
+import com.volunteer.commonweal.repositories.homePageRepositories.*;
 import com.volunteer.commonweal.services.env.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +24,8 @@ public class UpdateDBService {
     ApplicationRepository applicationRepository;
     @Autowired
     EmailVerifyTokenRepository emailVerifyTokenRepository;
+    @Autowired
+    OrganizationRepository organizationRepository;
     @Autowired
     Config config;
 
@@ -82,6 +82,33 @@ public class UpdateDBService {
         if(!userList.contains(userId)){
             userList.add(userId);
             activityRepository.save(activity);
+        }else {
+            throw new AuthException(105, config.getExceptionsMap().get(105));
+        }
+    }
+
+    public void addUserOrganization(String userId, String organizationId) throws  AuthException{
+        Optional<User> user = userRepository.findById(userId);
+        if(!user.isPresent()){
+            throw new AuthException(1031, config.getExceptionsMap().get(1031));
+        }
+        User userFound = user.get();
+        List<String> organizationList = userFound.getOrganizations();
+        if(!organizationList.contains(organizationId)){
+            organizationList.add(organizationId);
+            userRepository.save(userFound);
+        }else {
+            throw new AuthException(105, config.getExceptionsMap().get(105));
+        }
+        Optional<Organization> organizationFound = organizationRepository.findOneById(organizationId);
+        if(!organizationFound.isPresent()){
+            throw new AuthException(1048, config.getExceptionsMap().get(1048));
+        }
+        Organization organization = organizationFound.get();
+        List<String> userList = organization.getUsers();
+        if(!userList.contains(userId)){
+            userList.add(userId);
+            organizationRepository.save(organization);
         }else {
             throw new AuthException(105, config.getExceptionsMap().get(105));
         }
