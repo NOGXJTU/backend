@@ -22,9 +22,9 @@ public class Organization extends BaseModel {
 
     private String location;
 
-    private List<User> users; //成员列表
+    private List<String> users; //成员列表
 
-    private List<Activity> activities; //组织的活动列表
+    private List<String> activities; //组织的活动列表
 
     public String getDescription() {
         return description;
@@ -34,11 +34,11 @@ public class Organization extends BaseModel {
         return name;
     }
 
-    public List<Activity> getActivities() {
+    public List<String> getActivities() {
         return activities;
     }
 
-    public List<User> getUsers() {
+    public List<String> getUsers() {
         return users;
     }
 
@@ -58,7 +58,7 @@ public class Organization extends BaseModel {
         this.name = name;
     }
 
-    public void setActivities(List<Activity> activities) {
+    public void setActivities(List<String> activities) {
         this.activities = activities;
     }
 
@@ -70,7 +70,7 @@ public class Organization extends BaseModel {
         this.location = location;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(List<String> users) {
         this.users = users;
     }
 }

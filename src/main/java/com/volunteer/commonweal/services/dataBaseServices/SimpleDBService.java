@@ -291,6 +291,12 @@ public class SimpleDBService {
     public Organization saveOrganization(Organization organization){
         return organizationRepository.save(organization);
     }
+    public List<Organization> findAllOrganization(){
+        return organizationRepository.findAll();
+    }
+    public void deleteOneOrganizationById(String id){
+        organizationRepository.deleteById(id);
+    }
 
     //organizationApply的操作
     public Optional<OrganizationApply> findOrganizationApplyOneById(String id){

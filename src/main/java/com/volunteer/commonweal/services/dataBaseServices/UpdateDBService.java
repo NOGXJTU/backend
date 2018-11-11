@@ -29,6 +29,17 @@ public class UpdateDBService {
     @Autowired
     Config config;
 
+    public void removeUserOrganization(String userId, String organizationId) throws AuthException {
+        Optional<User> user = userRepository.findById(userId);
+        if(!user.isPresent()){
+            throw new AuthException(1031, config.getExceptionsMap().get(1031));
+        }
+        User userFound = user.get();
+        List<String> organizationList = userFound.getOrganizations();
+        organizationList.remove(organizationId);
+        userRepository.save(userFound);
+    }
+
     public void removeUserActivity(String userId, String activityId) throws AuthException{
         Optional<User> user = userRepository.findById(userId);
         if(!user.isPresent()){
