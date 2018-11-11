@@ -7,6 +7,7 @@ import com.volunteer.commonweal.common.EncryptionUtils;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.security.auth.message.AuthException;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,10 +41,10 @@ public class User extends BaseModel {
 
     private List<String> activitiesId = new ArrayList(); //参加的活动列表
 
-    private String organization;
+    private List<String> organizations = new ArrayList();
 
-    public String getOrganization() {
-        return organization;
+    public List<String> getOrganizations() {
+        return organizations;
     }
 
     public String getUsername() {
@@ -135,8 +136,8 @@ public class User extends BaseModel {
         this.password = EncryptionUtils.userPasswordEncrypt("SHA1", password);
     }
 
-    public void setOrganization(String organization) {
-        this.organization = organization;
+    public void setOrganizations(List<String> organizations) {
+        this.organizations = organizations;
     }
 
     public boolean isRightPassword(String password) throws EncryptException {

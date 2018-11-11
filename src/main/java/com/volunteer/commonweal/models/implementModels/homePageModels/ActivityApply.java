@@ -38,7 +38,7 @@ public class ActivityApply extends BaseModel {
     private String picUrl;//图片封面路径
 
     @NotNull
-    private int status;
+    private int status; //0: 申请中 1: 通过 2: 拒绝
 
     private String applyDescription;
 

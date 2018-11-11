@@ -10,4 +10,5 @@ public interface OrganizationFoundationRepository extends MongoRepository<Organi
     public Optional<OrganizationFoundation> findOneById(String id);
     public Stream<OrganizationFoundation> findByLeaderId(String leaderId);
     public Optional<OrganizationFoundation> findOneByName(String name);
+    public Stream<OrganizationFoundation> findByStatus(int status);
 }

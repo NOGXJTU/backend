@@ -31,12 +31,13 @@ public class SimpleDBService {
     private OrganizationRepository organizationRepository;
     private OrganizationApplyRepository organizationApplyRepository;
     private OrganizationFoundationRepository organizationFoundationRepository;
+    private ActivityApplyRepository activityApplyRepository;
 
     @Autowired
     public SimpleDBService(ActivityRepository activityRepository, ApplicationRepository applicationRepository, EmailVerifyTokenRepository emailVerifyTokenRepository, UserRepository userRepository
         , CollegeRepository collegeRepository, ExperienceRepository experienceRepository, GuideRepository guideRepository, KnowledgeRepository knowledgeRepository, MajorRepository majorRepository
         , QuestionRepository questionRepository, VideoClassRepository videoClassRepository, OrganizationRepository organizationRepository, OrganizationApplyRepository organizationApplyRepository
-        , OrganizationFoundationRepository organizationFoundationRepository){
+        , OrganizationFoundationRepository organizationFoundationRepository, ActivityApplyRepository activityApplyRepository){
         this.activityRepository = activityRepository;
         this.applicationRepository = applicationRepository;
         this.emailVerifyTokenRepository = emailVerifyTokenRepository;
@@ -51,6 +52,7 @@ public class SimpleDBService {
         this.organizationRepository = organizationRepository;
         this.organizationApplyRepository = organizationApplyRepository;
         this.organizationFoundationRepository = organizationFoundationRepository;
+        this.activityApplyRepository = activityApplyRepository;
     }
 
     //activity的操作
@@ -283,6 +285,12 @@ public class SimpleDBService {
     public Stream<Organization> findOrganizationByLeaderId(String leaderId){
         return organizationRepository.findByLeaderId(leaderId);
     }
+    public Organization insertOrganization(Organization organization){
+        return organizationRepository.insert(organization);
+    }
+    public Organization saveOrganization(Organization organization){
+        return organizationRepository.save(organization);
+    }
 
     //organizationApply的操作
     public Optional<OrganizationApply> findOrganizationApplyOneById(String id){
@@ -297,6 +305,13 @@ public class SimpleDBService {
     public Optional<OrganizationApply> findOrganizationApplyByOrganizationIdAndUserIdAndStatus(String organizationId, String userId, int status){
         return organizationApplyRepository.findByOrganizationIdAndUserIdAndStatus(organizationId, userId, status);
     }
+    public OrganizationApply saveOrganizationApply(OrganizationApply organizationApply){
+        return organizationApplyRepository.save(organizationApply);
+    }
+
+    public OrganizationApply insertOrganizationApply(OrganizationApply organizationApply){
+        return organizationApplyRepository.insert(organizationApply);
+    }
 
     //organizationFoundation的操作
     public Optional<OrganizationFoundation> findOneOrganizationFoundationById(String id){
@@ -307,5 +322,31 @@ public class SimpleDBService {
     }
     public Optional<OrganizationFoundation> findOneOrganizationFoundationByName(String name){
         return organizationFoundationRepository.findOneByName(name);
+    }
+    public Stream<OrganizationFoundation> findOrganizationFoundationByStatus(int status){
+        return organizationFoundationRepository.findByStatus(status);
+    }
+    public OrganizationFoundation saveOrganizationFoundation(OrganizationFoundation organizationFoundation){
+        return organizationFoundationRepository.save(organizationFoundation);
+    }
+    public OrganizationFoundation insertOrganizationFoundation(OrganizationFoundation organizationFoundation){
+        return organizationFoundationRepository.insert(organizationFoundation);
+    }
+
+    //activityApply的操作
+    public Optional<ActivityApply> findOneActivityApplyById(String id){
+        return activityApplyRepository.findOneById(id);
+    }
+    public Optional<ActivityApply> findOneActivityApplyByName(String name){
+        return activityApplyRepository.findOneByName(name);
+    }
+    public Stream<ActivityApply> findActivityApplyByOwnerId(String ownerId){
+        return activityApplyRepository.findByOwnerId(ownerId);
+    }
+    public ActivityApply saveActivityApply(ActivityApply activityApply){
+        return activityApplyRepository.save(activityApply);
+    }
+    public ActivityApply insertActivityApply(ActivityApply activityApply){
+        return activityApplyRepository.save(activityApply);
     }
 }
