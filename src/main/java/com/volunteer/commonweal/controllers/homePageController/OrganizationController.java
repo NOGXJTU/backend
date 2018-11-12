@@ -55,6 +55,7 @@ public class OrganizationController {
         String description = data.description;
         String location = data.location;
         String applyDescription = data.applyDescription;
+        String logoUrl = data.logoUrl;
         //检查参数是否传入
         if(!Objects.isNotNull(name, leaderId, location, applyDescription)){
             throw new AuthException(1011, config.getExceptionsMap().get(1011));
@@ -84,6 +85,7 @@ public class OrganizationController {
         organizationFoundation.setDescription(description);
         organizationFoundation.setStatus(0);
         organizationFoundation.setApplyDescription(applyDescription);
+        organizationFoundation.setLogoUrl(logoUrl);
         return new ResponseEntity(simpleDBService.insertOrganizationFoundation(organizationFoundation), HttpStatus.OK);
     }
 
@@ -113,6 +115,7 @@ public class OrganizationController {
         organization.setLeaderId(organizationFoundation.getLeaderId());
         organization.setDescription(organizationFoundation.getDescription());
         organization.setLocation(organizationFoundation.getLocation());
+        organization.setLogoUrl(organizationFoundation.getLogoUrl());
         List<String> users = new ArrayList<String>();
         users.add(organizationFoundation.getLeaderId());
         organization.setUsers(users);

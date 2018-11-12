@@ -6,4 +6,5 @@ public class ApplyOrganizationFoundationData {
     public String description;
     public String location;
     public String applyDescription;
+    public String logoUrl = "";
 }

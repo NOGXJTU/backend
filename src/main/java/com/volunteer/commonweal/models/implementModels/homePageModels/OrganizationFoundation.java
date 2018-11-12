@@ -21,10 +21,16 @@ public class OrganizationFoundation extends BaseModel {
 
     private String location;
 
+    private String logoUrl; //组织logo路径
+
     @NotNull
     private int status;
 
     private String applyDescription;
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
 
     public void setStatus(int status) {
         this.status = status;
@@ -72,5 +78,9 @@ public class OrganizationFoundation extends BaseModel {
 
     public String getApplyDescription() {
         return applyDescription;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
     }
 }

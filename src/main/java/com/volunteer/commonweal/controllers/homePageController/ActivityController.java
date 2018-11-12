@@ -52,7 +52,7 @@ public class ActivityController {
     }
 
 //  下面是ActivityApply相关的操作
-    @ApiOperation(value = "活动请求发送", notes = "")
+    @ApiOperation(value = "活动请求发送(用户Id)", notes = "")
     @RequestMapping(value = "/apply", method = RequestMethod.POST)
     public ResponseEntity applyActivityApply(@RequestBody ApplyActivityApplyData data, HttpSession session) throws AuthException {
         String organizationId = data.organizationId; //可以空吗? 暂时设定为不可为空
@@ -79,6 +79,61 @@ public class ActivityController {
                 !ParamConstraintUtils.isActivityDescriptionValid(description)||
                 !ParamConstraintUtils.isActivityTypeValid(type)||
                 !ParamConstraintUtils.isActivityDescriptionValid(applyDescription)){
+            throw new AuthException(1014, config.getExceptionsMap().get(1014));
+        }
+        //活动名称不能是现在已经存在的，也不能是申请中已经存在的
+        if (activityService.isActivityDuplicate(name, beginTime)
+                ||activityService.isActivityApplyDuplicate(name)) {
+            throw new AuthException(105, config.getExceptionsMap().get(105));
+        }
+
+        User owner = ownerFound.get();
+        //owner的组织中必须包含这个活动的组织
+        if(!owner.getOrganizations().contains(organizationId)){
+            throw new AuthException(1048, config.getExceptionsMap().get(1048));
+        }
+        ActivityApply activityApply = new ActivityApply();
+        activityApply.setOrganizationId(organizationId);
+        activityApply.setName(name);
+        activityApply.setOwnerId(owner.getId());
+        activityApply.setDescription(description);
+        activityApply.setPlace(place);
+        activityApply.setBeginTime(beginTime);
+        activityApply.setLasting(lasting);
+        activityApply.setType(type);
+        activityApply.setPicUrl(picUrl);
+        activityApply.setStatus(0);
+        activityApply.setDescription(description);
+        return new ResponseEntity(simpleDBService.insertActivityApply(activityApply), HttpStatus.OK);
+    }
+    @ApiOperation(value = "活动请求发送(手机号)", notes = "")
+    @RequestMapping(value = "/phoneApply", method = RequestMethod.POST)
+    public ResponseEntity applyActivityApplyByPhone(@RequestBody ApplyActivityApplyByPhoneData data, HttpSession session) throws AuthException {
+        String organizationId = data.organizationId; //可以空吗? 暂时设定为不可为空
+        String name = data.name;
+        String ownerPhone = data.ownerPhone;
+        String description = data.description;
+        String applyDescription = data.applyDescription;
+        String place = data.place;
+        String beginTime = data.beginTime;
+        String lasting = data.lasting;
+        String type = data.type;
+        String picUrl = data.picUrl; //可以为空
+        if(!Objects.isNotNull(name, ownerPhone, description, applyDescription
+                , place, beginTime, lasting, type)){
+            throw new AuthException(1011, config.getExceptionsMap().get(1011));
+        }
+        Optional<User> ownerFound = simpleDBService.findOneUserByPhone(ownerPhone);
+        if (!ownerFound.isPresent()){
+            throw new AuthException(1042, config.getExceptionsMap().get(1042));
+        }
+
+        //格式要正确
+        if (!ParamConstraintUtils.isActivityNameValid(name)||
+                !ParamConstraintUtils.isActivityDescriptionValid(description)||
+                !ParamConstraintUtils.isActivityTypeValid(type)||
+                !ParamConstraintUtils.isActivityDescriptionValid(applyDescription)||
+                !ParamConstraintUtils.isPhone(ownerPhone)){
             throw new AuthException(1014, config.getExceptionsMap().get(1014));
         }
         //活动名称不能是现在已经存在的，也不能是申请中已经存在的
@@ -485,6 +540,7 @@ public class ActivityController {
         activity.setShow(show);
         activity.setComment(commonet);
         activity.setPictures(pictures);
+        activity.setFinished(true);
         return new ResponseEntity(simpleDBService.saveActivity(activity), HttpStatus.OK);
     }
 

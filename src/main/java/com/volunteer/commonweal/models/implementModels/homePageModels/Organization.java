@@ -26,6 +26,12 @@ public class Organization extends BaseModel {
 
     private List<String> activities; //组织的活动列表
 
+    private String logoUrl; //组织logo路径
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -72,5 +78,9 @@ public class Organization extends BaseModel {
 
     public void setUsers(List<String> users) {
         this.users = users;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
     }
 }
