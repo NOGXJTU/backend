@@ -459,8 +459,14 @@ public class OrganizationController {
         Organization organization = organizationFound.get();
         User user = userFound.get();
         List<String> organizationList = user.getOrganizations();
+//        if(!organizationList.contains(organizationId)){
+//            throw new AuthException(1048, config.getExceptionsMap().get(1048));
+//        }
         organizationList.remove(organizationId);
         List<String> userList = organization.getUsers();
+//        if(userList.contains(userId.get())){
+//            throw new AuthException(1042, config.getExceptionsMap().get(1042));
+//        }
         userList.remove(userId.get());
 
         simpleDBService.saveOrganization(organization);

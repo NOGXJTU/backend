@@ -10,6 +10,7 @@ import com.volunteer.commonweal.models.exceptionModels.AuthException;
 import com.volunteer.commonweal.models.exceptionModels.BaseException;
 import com.volunteer.commonweal.models.implementModels.homePageModels.Activity;
 import com.volunteer.commonweal.models.implementModels.homePageModels.ActivityApply;
+import com.volunteer.commonweal.models.implementModels.homePageModels.Organization;
 import com.volunteer.commonweal.models.implementModels.homePageModels.User;
 import com.volunteer.commonweal.models.requestModels.homePageRequestModels.ActivityRequestModels.*;
 import com.volunteer.commonweal.services.dataBaseServices.SimpleDBService;
@@ -73,7 +74,7 @@ public class ActivityController {
             throw new AuthException(1042, config.getExceptionsMap().get(1042));
         }
 
-        //格式要真确
+        //格式要正确
         if (!ParamConstraintUtils.isActivityNameValid(name)||
                 !ParamConstraintUtils.isActivityDescriptionValid(description)||
                 !ParamConstraintUtils.isActivityTypeValid(type)||
@@ -87,6 +88,10 @@ public class ActivityController {
         }
 
         User owner = ownerFound.get();
+        //owner的组织中必须包含这个活动的组织
+        if(!owner.getOrganizations().contains(organizationId)){
+            throw new AuthException(1048, config.getExceptionsMap().get(1048));
+        }
         ActivityApply activityApply = new ActivityApply();
         activityApply.setOrganizationId(organizationId);
         activityApply.setName(name);
@@ -180,8 +185,9 @@ public class ActivityController {
         String lasting = data.lasting;
         String type = data.type;
         String picUrl = data.picUrl;
+        String organizationId = data.organizationId;
         Optional<User> owner = simpleDBService.findOneUserByUserId(ownerId);
-        if (!Objects.isNotNull(name, ownerId, description, place, beginTime, lasting, type, picUrl)) {
+        if (!Objects.isNotNull(name, ownerId, description, place, beginTime, lasting, type, picUrl, organizationId)) {
             throw new AuthException(1011, config.getExceptionsMap().get(1011));
         }
         if(!owner.isPresent()){
@@ -198,6 +204,11 @@ public class ActivityController {
         if (activityService.isActivityDuplicate(name, beginTime)) {
             throw new AuthException(105, config.getExceptionsMap().get(105));
         }
+        //组织是否存在的验证
+        Optional<Organization> organizationFound = simpleDBService.findOneOrganizationById(organizationId);
+        if(!organizationFound.isPresent()){
+            throw new AuthException(1048, config.getExceptionsMap().get(1048));
+        }
         User ownerFound = owner.get();
         users.add(ownerId);
         Activity activity = new Activity();
@@ -211,9 +222,15 @@ public class ActivityController {
         activity.setLasting(lasting);
         activity.setType(type);
         activity.setPicUrl(picUrl);
+        activity.setOrganizationId(organizationId);
         activity = simpleDBService.insertActivity(activity);
+        //保存修改user和修改organization
         ownerFound.getActivitiesId().add(activity.getId());
-        return new ResponseEntity(simpleDBService.saveUser(ownerFound), HttpStatus.OK);
+        simpleDBService.saveUser(ownerFound);
+        Organization organization = organizationFound.get();
+        organization.getActivities().add(activity.getId());
+        simpleDBService.saveOrganization(organization);
+        return new ResponseEntity(activity, HttpStatus.OK);
     }
 
     @ApiOperation(value = "删除指定活动", notes = "传入活动Id(activityId),成功时返回状态200,失败时返回状态以及错误信息")
@@ -235,6 +252,9 @@ public class ActivityController {
         userStream.forEach(user -> user.getActivitiesId().remove(activityId));
         simpleDBService.saveUsers(userStream);
         simpleDBService.deleteActivityByActivityId(activityId);
+        Organization organization = simpleDBService.findOneOrganizationById(activityFound.get().getOrganizationId()).get();
+        organization.getActivities().remove(activityId);
+        simpleDBService.saveOrganization(organization);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -315,12 +335,16 @@ public class ActivityController {
         if(!activityFound.isPresent()){
             throw new AuthException(1043, config.getExceptionsMap().get(1043));
         }
+        // 权限要求是组长本人
         if(!activityService.isGroupOwner(session, activityId)){
             throw new AuthException(102, config.getExceptionsMap().get(102));
         }
-        activityFound.ifPresent(activity -> {
-            activity.setOwnerId(newOwnerId);
-        });
+        Activity activity = activityFound.get();
+        //必须是本活动的成员
+        if(!activity.getUsers().contains(newOwnerId)){
+            throw new AuthException(1045, config.getExceptionsMap().get(1045));
+        }
+        activity.setOwnerId(newOwnerId);
         return new ResponseEntity(simpleDBService.saveActivity(activityFound.get()), HttpStatus.OK);
     }
 
@@ -485,6 +509,8 @@ public class ActivityController {
         return new ResponseEntity(data, HttpStatus.OK);
     }
 
+    //todo:加一个根据组织获取活动信息???
+
 
     @ApiOperation(value = "获取活动views", notes = "")
     @RequestMapping(value = "/activity/view", method = RequestMethod.GET)
@@ -628,6 +654,7 @@ public class ActivityController {
         return new ResponseEntity(simpleDBService.saveUser(ownerFound), HttpStatus.OK);
     }
 
+    //todo:
     @ApiOperation(value = "删除活动", notes = "")
     @RequestMapping(value = "/activity/{id}", method = RequestMethod.DELETE)
     public ResponseEntity managementDeleteActivity(@PathVariable String id, HttpSession session) throws AuthException {
@@ -646,6 +673,10 @@ public class ActivityController {
         Stream<User> userStream = simpleDBService.findUserByIdIn(activityFound.get().getUsers());
         userStream.forEach(user -> user.getActivitiesId().remove(id));
         simpleDBService.saveUsers(userStream);
+
+        Organization organization = simpleDBService.findOneOrganizationById(activityFound.get().getOrganizationId()).get();
+        organization.getActivities().remove(id);
+        simpleDBService.saveOrganization(organization);
         return new ResponseEntity(HttpStatus.OK);
         //TODO:可以考虑删掉对应活动的所有申请(但是没有必要，只是减少了数据库中的部分内容，同时审批记录就看不到了)
     }

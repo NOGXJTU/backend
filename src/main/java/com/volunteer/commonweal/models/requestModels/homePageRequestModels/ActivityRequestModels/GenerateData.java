@@ -9,4 +9,5 @@ public class GenerateData {
     public String lasting;
     public String type;
     public String picUrl;
+    public String organizationId;
 }
