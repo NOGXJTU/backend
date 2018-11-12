@@ -3,6 +3,7 @@ package com.volunteer.commonweal.services.homePageServices;
 import com.volunteer.commonweal.constants.UIConst;
 import com.volunteer.commonweal.models.exceptionModels.AuthException;
 import com.volunteer.commonweal.models.implementModels.homePageModels.Activity;
+import com.volunteer.commonweal.models.implementModels.homePageModels.ActivityApply;
 import com.volunteer.commonweal.services.dataBaseServices.SimpleDBService;
 import com.volunteer.commonweal.services.env.Config;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,14 @@ public class ActivityService {
     }
     public boolean isActivityDuplicate(String name, String beginTime){
         return simpleDBService.findOneActivityByNameAndBeginTime(name, beginTime).isPresent();
+    }
+
+    public boolean isActivityApplyDuplicate(String name){
+        Optional<ActivityApply> activityApplyFound = simpleDBService.findOneActivityApplyByName(name);
+        if(!activityApplyFound.isPresent()){
+            return false;
+        }
+        return (activityApplyFound.get().getStatus() == 0);
     }
 
     public Optional<String> getUserIdFromSession(HttpSession session){

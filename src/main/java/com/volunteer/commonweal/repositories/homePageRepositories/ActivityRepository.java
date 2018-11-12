@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 public interface ActivityRepository extends MongoRepository<Activity, String> {
     public Optional<Activity> findOneById(String id);
+    public Stream<Activity> findByOrganizationId(String organizationId);
     public Page<Activity> findAllByFinished(boolean finished, Pageable pageable);
     public Stream<Activity> findAllByFinished(boolean finished);
     public Optional<Activity> findOneByNameAndBeginTime(String name, String beginTime);

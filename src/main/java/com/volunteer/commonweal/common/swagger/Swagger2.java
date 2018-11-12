@@ -9,9 +9,11 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 //Swagger文档配置类
 @Configuration
+@EnableSwagger2
 public class Swagger2 {
     @Bean
     public Docket createRestApi(){
@@ -29,7 +31,7 @@ public class Swagger2 {
                 .description("暂无描述")
                 .contact("401569798@qq.com")
                 .termsOfServiceUrl("")
-                .version("1.0")
+                .version("2.0")
                 .build();
     }
 
