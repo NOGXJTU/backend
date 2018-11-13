@@ -7,6 +7,7 @@ import com.volunteer.commonweal.common.EncryptionUtils;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.security.auth.message.AuthException;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,12 @@ public class User extends BaseModel {
     private String avatar; //用户头像 暂时定下存储的在服务器本地的预制图像(有默认值)
 
     private List<String> activitiesId = new ArrayList(); //参加的活动列表
+
+    private List<String> organizations = new ArrayList();
+
+    public List<String> getOrganizations() {
+        return organizations;
+    }
 
     public String getUsername() {
         return username;
@@ -127,6 +134,10 @@ public class User extends BaseModel {
 
     public void setPassword(String password) throws EncryptException {
         this.password = EncryptionUtils.userPasswordEncrypt("SHA1", password);
+    }
+
+    public void setOrganizations(List<String> organizations) {
+        this.organizations = organizations;
     }
 
     public boolean isRightPassword(String password) throws EncryptException {
