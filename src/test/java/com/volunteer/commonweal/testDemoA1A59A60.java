@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CommonwealApplication.class)
 @SpringBootConfiguration
-public class testDemoA1 {
+public class testDemoA1A59A60 {
     private MockMvc mockMvc;
     private static MvcResult mvcResult;
     private static MockHttpSession session;
@@ -59,7 +59,7 @@ public class testDemoA1 {
     private VerifyData vData = new VerifyData();
     private UserData uData = new UserData();
 
-//    //testA1_1 send_token
+//    //testA1_1 send_token A59
 //    @Test
 //    public void testA1_1() throws Exception{
 //        this.mockMvc = webAppContextSetup(webApplicationContext).build();//加载上下文
@@ -78,7 +78,7 @@ public class testDemoA1 {
 //
 //    }
 
-    //testA1_2 token_verify
+    //testA1_2 token_verify A60
     @Test
     public void testA1_2() throws Exception{
         this.mockMvc = webAppContextSetup(webApplicationContext).build();//加载上下文
