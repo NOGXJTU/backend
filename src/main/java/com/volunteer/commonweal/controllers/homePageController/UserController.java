@@ -59,7 +59,8 @@ public class UserController {
                 Objects.isNull(qq)||
                 Objects.isNull(phone)||
                 Objects.isNull(school)||
-                Objects.isNull(token)){
+                Objects.isNull(token)
+                ){
             throw new AuthException(1011, config.getExceptionsMap().get(1011));
         }
         //参数无效
@@ -125,6 +126,7 @@ public class UserController {
             throw new AuthException(1032, config.getExceptionsMap().get(1032));
         }
         session.setAttribute(UIConst.SESSION_USER_ID, user.get().getId());
+        System.out.println(session.getAttribute("userId"));
         return new ResponseEntity(user, HttpStatus.OK);
     }
 

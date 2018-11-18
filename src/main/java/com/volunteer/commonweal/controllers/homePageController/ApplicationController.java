@@ -53,25 +53,35 @@ public class ApplicationController {
         String activityId = data.activityId;
         String description = data.description;
         Optional<String> userId = applicationService.getUserIdFromSession(session);
+        // 参数缺失
         if(Objects.isNull(activityId)||
                 Objects.isNull(description)||
                 !userId.isPresent()){
             throw new AuthException(1011, config.getExceptionsMap().get(1011));
         }
+        // 用户不存在
         Optional<User> userFound = simpleDBService.findOneUserById(userId.get());
         if(!userFound.isPresent()){
             throw new AuthException(1031, config.getExceptionsMap().get(1031));
         }
+
+        // 参数格式不真确
         if(!ParamConstraintUtils.isDescriptionValid(description)){
             throw new AuthException(101, config.getExceptionsMap().get(101));
         }
+
+        //活动不存在
         Optional<Activity> activity = simpleDBService.findOneActivityByActivityId(activityId);
         if(!activity.isPresent()){
             throw new AuthException(1043, config.getExceptionsMap().get(1043));
         }
+
+        //用户已经参加这个活动
         if(userFound.get().getActivitiesId().contains(activityId)){
             throw new AuthException(1051, config.getExceptionsMap().get(1051));
         }
+
+        //请求已经存在
         Optional<Application> application = simpleDBService.findOneApplicationByUserIdAndActivityIdAndStatus(userId.get(), activityId, 0);
         if(application.isPresent()){
             throw new AuthException(105, config.getExceptionsMap().get(105));

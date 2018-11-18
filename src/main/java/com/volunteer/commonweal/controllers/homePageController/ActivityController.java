@@ -9,6 +9,8 @@ import com.volunteer.commonweal.models.ResponseModels.ManagementModel.ActivityCo
 import com.volunteer.commonweal.models.exceptionModels.AuthException;
 import com.volunteer.commonweal.models.exceptionModels.BaseException;
 import com.volunteer.commonweal.models.implementModels.homePageModels.Activity;
+import com.volunteer.commonweal.models.implementModels.homePageModels.ActivityApply;
+import com.volunteer.commonweal.models.implementModels.homePageModels.Organization;
 import com.volunteer.commonweal.models.implementModels.homePageModels.User;
 import com.volunteer.commonweal.models.requestModels.homePageRequestModels.ActivityRequestModels.*;
 import com.volunteer.commonweal.services.dataBaseServices.SimpleDBService;
@@ -18,6 +20,7 @@ import com.volunteer.commonweal.services.homePageServices.ActivityService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.swing.text.html.Option;
+import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,6 +51,161 @@ public class ActivityController {
         this.updateDBService = updateDBService;
     }
 
+//  下面是ActivityApply相关的操作
+    @ApiOperation(value = "活动请求发送(用户Id)", notes = "")
+    @RequestMapping(value = "/apply", method = RequestMethod.POST)
+    public ResponseEntity applyActivityApply(@RequestBody ApplyActivityApplyData data, HttpSession session) throws AuthException {
+        String organizationId = data.organizationId; //可以空吗? 暂时设定为不可为空
+        String name = data.name;
+        String ownerId = data.ownerId;
+        String description = data.description;
+        String applyDescription = data.applyDescription;
+        String place = data.place;
+        String beginTime = data.beginTime;
+        String lasting = data.lasting;
+        String type = data.type;
+        String picUrl = data.picUrl; //可以为空
+        if(!Objects.isNotNull(name, ownerId, description, applyDescription
+        , place, beginTime, lasting, type)){
+            throw new AuthException(1011, config.getExceptionsMap().get(1011));
+        }
+        Optional<User> ownerFound = simpleDBService.findOneUserById(ownerId);
+        if (!ownerFound.isPresent()){
+            throw new AuthException(1042, config.getExceptionsMap().get(1042));
+        }
+
+        //格式要正确
+        if (!ParamConstraintUtils.isActivityNameValid(name)||
+                !ParamConstraintUtils.isActivityDescriptionValid(description)||
+                !ParamConstraintUtils.isActivityTypeValid(type)||
+                !ParamConstraintUtils.isActivityDescriptionValid(applyDescription)){
+            throw new AuthException(1014, config.getExceptionsMap().get(1014));
+        }
+        //活动名称不能是现在已经存在的，也不能是申请中已经存在的
+        if (activityService.isActivityDuplicate(name, beginTime)
+                ||activityService.isActivityApplyDuplicate(name)) {
+            throw new AuthException(105, config.getExceptionsMap().get(105));
+        }
+
+        User owner = ownerFound.get();
+        //owner的组织中必须包含这个活动的组织
+        if(!owner.getOrganizations().contains(organizationId)){
+            throw new AuthException(1048, config.getExceptionsMap().get(1048));
+        }
+        ActivityApply activityApply = new ActivityApply();
+        activityApply.setOrganizationId(organizationId);
+        activityApply.setName(name);
+        activityApply.setOwnerId(owner.getId());
+        activityApply.setDescription(description);
+        activityApply.setPlace(place);
+        activityApply.setBeginTime(beginTime);
+        activityApply.setLasting(lasting);
+        activityApply.setType(type);
+        activityApply.setPicUrl(picUrl);
+        activityApply.setStatus(0);
+        activityApply.setDescription(description);
+        return new ResponseEntity(simpleDBService.insertActivityApply(activityApply), HttpStatus.OK);
+    }
+    @ApiOperation(value = "活动请求发送(手机号)", notes = "")
+    @RequestMapping(value = "/phoneApply", method = RequestMethod.POST)
+    public ResponseEntity applyActivityApplyByPhone(@RequestBody ApplyActivityApplyByPhoneData data, HttpSession session) throws AuthException {
+        String organizationId = data.organizationId; //可以空吗? 暂时设定为不可为空
+        String name = data.name;
+        String ownerPhone = data.ownerPhone;
+        String description = data.description;
+        String applyDescription = data.applyDescription;
+        String place = data.place;
+        String beginTime = data.beginTime;
+        String lasting = data.lasting;
+        String type = data.type;
+        String picUrl = data.picUrl; //可以为空
+        if(!Objects.isNotNull(name, ownerPhone, description, applyDescription
+                , place, beginTime, lasting, type)){
+            throw new AuthException(1011, config.getExceptionsMap().get(1011));
+        }
+        Optional<User> ownerFound = simpleDBService.findOneUserByPhone(ownerPhone);
+        if (!ownerFound.isPresent()){
+            throw new AuthException(1042, config.getExceptionsMap().get(1042));
+        }
+
+        //格式要正确
+        if (!ParamConstraintUtils.isActivityNameValid(name)||
+                !ParamConstraintUtils.isActivityDescriptionValid(description)||
+                !ParamConstraintUtils.isActivityTypeValid(type)||
+                !ParamConstraintUtils.isActivityDescriptionValid(applyDescription)||
+                !ParamConstraintUtils.isPhone(ownerPhone)){
+            throw new AuthException(1014, config.getExceptionsMap().get(1014));
+        }
+        //活动名称不能是现在已经存在的，也不能是申请中已经存在的
+        if (activityService.isActivityDuplicate(name, beginTime)
+                ||activityService.isActivityApplyDuplicate(name)) {
+            throw new AuthException(105, config.getExceptionsMap().get(105));
+        }
+
+        User owner = ownerFound.get();
+        //owner的组织中必须包含这个活动的组织
+        if(!owner.getOrganizations().contains(organizationId)){
+            throw new AuthException(1048, config.getExceptionsMap().get(1048));
+        }
+        ActivityApply activityApply = new ActivityApply();
+        activityApply.setOrganizationId(organizationId);
+        activityApply.setName(name);
+        activityApply.setOwnerId(owner.getId());
+        activityApply.setDescription(description);
+        activityApply.setPlace(place);
+        activityApply.setBeginTime(beginTime);
+        activityApply.setLasting(lasting);
+        activityApply.setType(type);
+        activityApply.setPicUrl(picUrl);
+        activityApply.setStatus(0);
+        activityApply.setDescription(description);
+        return new ResponseEntity(simpleDBService.insertActivityApply(activityApply), HttpStatus.OK);
+    }
+    @ApiOperation(value = "拒绝活动申请", notes = "")
+    @RequestMapping(value = "/refuse", method = RequestMethod.POST)
+    public ResponseEntity refuseActivityApply(@RequestBody ActivityApplyIdData data, HttpSession session) throws AuthException {
+        String activityApplyId = data.activityApplyId;
+        if(Objects.isNull(activityApplyId)){
+            throw new AuthException(1011, config.getExceptionsMap().get(1011));
+        }
+        //管理员身份验证
+        if(!activityService.isSuperUser(session)){
+            throw new AuthException(102, config.getExceptionsMap().get(102));
+        }
+        Optional<ActivityApply> activityApplyFound = simpleDBService.findOneActivityApplyById(activityApplyId);
+        if(!activityApplyFound.isPresent()){
+            throw new AuthException(1044, config.getExceptionsMap().get(1044));
+        }
+
+        ActivityApply activityApply = activityApplyFound.get();
+        activityApply.setStatus(2);
+        return new ResponseEntity(simpleDBService.saveActivityApply(activityApply), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "同意活动申请", notes = "")
+    @RequestMapping(value = "/agree", method = RequestMethod.POST)
+    public ResponseEntity agreeActivityApply(@RequestBody ActivityApplyIdData data, HttpSession session) throws AuthException {
+        String activityApplyId = data.activityApplyId;
+        if(Objects.isNull(activityApplyId)){
+            throw new AuthException(1011, config.getExceptionsMap().get(1011));
+        }
+        //管理员身份验证
+        if(!activityService.isSuperUser(session)){
+            throw new AuthException(102, config.getExceptionsMap().get(102));
+        }
+        Optional<ActivityApply> activityApplyFound = simpleDBService.findOneActivityApplyById(activityApplyId);
+        if(!activityApplyFound.isPresent()){
+            throw new AuthException(1044, config.getExceptionsMap().get(1044));
+        }
+
+        ActivityApply activityApply = activityApplyFound.get();
+        activityApply.setStatus(1);
+        return new ResponseEntity(simpleDBService.saveActivityApply(activityApply), HttpStatus.OK);
+    }
+
+
+//  下面是Activity相关的操作
+
     @ApiOperation(value = "获取指定活动Id的活动信息", notes = "传入活动Id(activityId),成功时返回状态200返回活动详细信息,失败时返回状态以及错误信息")
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity getActivity(@RequestBody OnlyIdData data) throws BaseException {
@@ -65,6 +224,7 @@ public class ActivityController {
         return new ResponseEntity(simpleDBService.findAllActivityByFinished(finished), HttpStatus.OK);
     }
 
+
     //TODO:用事务改写
     @ApiOperation(value = "生成活动", notes = "传入除了活动成员Id和活动状态之外的所有其他参数,成功时返回状态200,并且返回活动信息,失败时返回状态以及错误信息")
     @RequestMapping(value = "/generate", method = RequestMethod.POST)
@@ -80,12 +240,13 @@ public class ActivityController {
         String lasting = data.lasting;
         String type = data.type;
         String picUrl = data.picUrl;
+        String organizationId = data.organizationId;
         Optional<User> owner = simpleDBService.findOneUserByUserId(ownerId);
+        if (!Objects.isNotNull(name, ownerId, description, place, beginTime, lasting, type, picUrl, organizationId)) {
+            throw new AuthException(1011, config.getExceptionsMap().get(1011));
+        }
         if(!owner.isPresent()){
             throw new AuthException(1042, config.getExceptionsMap().get(1042));
-        }
-        if (!Objects.isNotNull(name, ownerId, description, place, beginTime, lasting, type, picUrl)) {
-            throw new AuthException(1011, config.getExceptionsMap().get(1011));
         }
         if (!ParamConstraintUtils.isActivityNameValid(name)||
                 !ParamConstraintUtils.isActivityDescriptionValid(description)||
@@ -97,6 +258,11 @@ public class ActivityController {
         }
         if (activityService.isActivityDuplicate(name, beginTime)) {
             throw new AuthException(105, config.getExceptionsMap().get(105));
+        }
+        //组织是否存在的验证
+        Optional<Organization> organizationFound = simpleDBService.findOneOrganizationById(organizationId);
+        if(!organizationFound.isPresent()){
+            throw new AuthException(1048, config.getExceptionsMap().get(1048));
         }
         User ownerFound = owner.get();
         users.add(ownerId);
@@ -111,9 +277,15 @@ public class ActivityController {
         activity.setLasting(lasting);
         activity.setType(type);
         activity.setPicUrl(picUrl);
+        activity.setOrganizationId(organizationId);
         activity = simpleDBService.insertActivity(activity);
+        //保存修改user和修改organization
         ownerFound.getActivitiesId().add(activity.getId());
-        return new ResponseEntity(simpleDBService.saveUser(ownerFound), HttpStatus.OK);
+        simpleDBService.saveUser(ownerFound);
+        Organization organization = organizationFound.get();
+        organization.getActivities().add(activity.getId());
+        simpleDBService.saveOrganization(organization);
+        return new ResponseEntity(activity, HttpStatus.OK);
     }
 
     @ApiOperation(value = "删除指定活动", notes = "传入活动Id(activityId),成功时返回状态200,失败时返回状态以及错误信息")
@@ -126,7 +298,6 @@ public class ActivityController {
         if(!activityService.isSuperUser(session) && !activityService.isGroupOwner(session, activityId)){
             throw new AuthException(102, config.getExceptionsMap().get(102));
         }
-        simpleDBService.deleteActivityByActivityId(activityId);
         //开始清除成员中的活动列表
         Optional<Activity> activityFound = simpleDBService.findOneActivityByActivityId(activityId);
         if(!activityFound.isPresent()){
@@ -135,6 +306,10 @@ public class ActivityController {
         Stream<User> userStream = simpleDBService.findUserByIdIn(activityFound.get().getUsers());
         userStream.forEach(user -> user.getActivitiesId().remove(activityId));
         simpleDBService.saveUsers(userStream);
+        simpleDBService.deleteActivityByActivityId(activityId);
+        Organization organization = simpleDBService.findOneOrganizationById(activityFound.get().getOrganizationId()).get();
+        organization.getActivities().remove(activityId);
+        simpleDBService.saveOrganization(organization);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -215,12 +390,16 @@ public class ActivityController {
         if(!activityFound.isPresent()){
             throw new AuthException(1043, config.getExceptionsMap().get(1043));
         }
+        // 权限要求是组长本人
         if(!activityService.isGroupOwner(session, activityId)){
             throw new AuthException(102, config.getExceptionsMap().get(102));
         }
-        activityFound.ifPresent(activity -> {
-            activity.setOwnerId(newOwnerId);
-        });
+        Activity activity = activityFound.get();
+        //必须是本活动的成员
+        if(!activity.getUsers().contains(newOwnerId)){
+            throw new AuthException(1045, config.getExceptionsMap().get(1045));
+        }
+        activity.setOwnerId(newOwnerId);
         return new ResponseEntity(simpleDBService.saveActivity(activityFound.get()), HttpStatus.OK);
     }
 
@@ -361,6 +540,7 @@ public class ActivityController {
         activity.setShow(show);
         activity.setComment(commonet);
         activity.setPictures(pictures);
+        activity.setFinished(true);
         return new ResponseEntity(simpleDBService.saveActivity(activity), HttpStatus.OK);
     }
 
@@ -384,6 +564,8 @@ public class ActivityController {
         data.page = (int) Math.ceil((double)data.total/(double)data.perPage);
         return new ResponseEntity(data, HttpStatus.OK);
     }
+
+    //todo:加一个根据组织获取活动信息???
 
 
     @ApiOperation(value = "获取活动views", notes = "")
@@ -528,6 +710,7 @@ public class ActivityController {
         return new ResponseEntity(simpleDBService.saveUser(ownerFound), HttpStatus.OK);
     }
 
+    //todo:
     @ApiOperation(value = "删除活动", notes = "")
     @RequestMapping(value = "/activity/{id}", method = RequestMethod.DELETE)
     public ResponseEntity managementDeleteActivity(@PathVariable String id, HttpSession session) throws AuthException {
@@ -546,6 +729,10 @@ public class ActivityController {
         Stream<User> userStream = simpleDBService.findUserByIdIn(activityFound.get().getUsers());
         userStream.forEach(user -> user.getActivitiesId().remove(id));
         simpleDBService.saveUsers(userStream);
+
+        Organization organization = simpleDBService.findOneOrganizationById(activityFound.get().getOrganizationId()).get();
+        organization.getActivities().remove(id);
+        simpleDBService.saveOrganization(organization);
         return new ResponseEntity(HttpStatus.OK);
         //TODO:可以考虑删掉对应活动的所有申请(但是没有必要，只是减少了数据库中的部分内容，同时审批记录就看不到了)
     }
