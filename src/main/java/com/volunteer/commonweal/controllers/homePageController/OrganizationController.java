@@ -3,7 +3,9 @@ package com.volunteer.commonweal.controllers.homePageController;
 import com.volunteer.commonweal.common.Objects;
 import com.volunteer.commonweal.common.ParamConstraintUtils;
 import com.volunteer.commonweal.models.exceptionModels.AuthException;
+import com.volunteer.commonweal.models.exceptionModels.BaseException;
 import com.volunteer.commonweal.models.implementModels.homePageModels.*;
+import com.volunteer.commonweal.models.requestModels.homePageRequestModels.ActivityRequestModels.ActivityIdListData;
 import com.volunteer.commonweal.models.requestModels.homePageRequestModels.OrganizationRequestModels.*;
 import com.volunteer.commonweal.services.dataBaseServices.SimpleDBService;
 import com.volunteer.commonweal.services.dataBaseServices.UpdateDBService;
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Api(description = "组织加入申请接口信息")
 @RestController
@@ -187,6 +190,20 @@ public class OrganizationController {
     }
 
 //  组织信息相关接口
+
+    @ApiOperation(value = "批量获取指定组织Id的组织信息", notes = "传入组织IdList(organizationIdList),成功时返回状态200返回组织详细信息,失败时返回状态以及错误信息")
+    @RequestMapping(value = "/batch", method = RequestMethod.POST)
+    public ResponseEntity getBatchOrganization(@RequestBody OrganizationIdListData data) throws BaseException {
+        List<String> organizationIdList = data.organizationIdList;
+        if(Objects.isNull(organizationIdList)){
+            throw new AuthException(1011, config.getExceptionsMap().get(1011));
+        }
+        Stream<Organization> organizationStream = simpleDBService.findAllOrganizationById(organizationIdList);
+        if(Objects.isNull(organizationStream)){
+            throw new AuthException(1048, config.getExceptionsMap().get(1048));
+        }
+        return new ResponseEntity(organizationStream, HttpStatus.OK);
+    }
 
     //获取单个组织信息
     @ApiOperation(value = "获取单个组织的信息", notes = "")

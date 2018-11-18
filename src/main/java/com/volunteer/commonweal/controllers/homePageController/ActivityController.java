@@ -210,6 +210,9 @@ public class ActivityController {
     @RequestMapping(value = "/batch", method = RequestMethod.POST)
     public ResponseEntity getBatchActivity(@RequestBody ActivityIdListData data) throws BaseException {
         List<String> activityIdList = data.activityIdList;
+        if(Objects.isNull(activityIdList)){
+            throw new AuthException(1011, config.getExceptionsMap().get(1011));
+        }
         Stream<Activity> activityStream = simpleDBService.findAllActivityById(activityIdList);
         if(Objects.isNull(activityStream)){
             throw new AuthException(1044, config.getExceptionsMap().get(1044));
