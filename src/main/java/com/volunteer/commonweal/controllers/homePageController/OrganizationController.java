@@ -370,7 +370,7 @@ public class OrganizationController {
         }
         System.out.println(2);
         OrganizationApply organizationApply = organizationApplyFound.get();
-        if(!organizationService.isOrganizationLeader(session, organizationApplyId)){
+        if(!organizationService.isOrganizationLeader(session, organizationApply.getOrganizationId())){
             throw new AuthException(102, config.getExceptionsMap().get(102));
         }
         System.out.println(3);
@@ -386,7 +386,7 @@ public class OrganizationController {
     @RequestMapping(value = "/join/refuse", method = RequestMethod.POST)
     public ResponseEntity refuseOrganizationApply(@RequestBody OrganizationApplyIdData data, HttpSession session) throws AuthException {
         String organizationApplyId = data.organizationApplyId;
-        if(Objects.isNull(organizationApplyId)){
+        if(Objects.isNull(organizationApplyId)){t
             throw new AuthException(1011, config.getExceptionsMap().get(1011));
         }
         Optional<OrganizationApply> organizationApplyFound = simpleDBService.findOneOrganizationApplyById(organizationApplyId);
@@ -394,7 +394,7 @@ public class OrganizationController {
             throw new AuthException(1049, config.getExceptionsMap().get(1049));
         }
         OrganizationApply organizationApply = organizationApplyFound.get();
-        if(!organizationService.isOrganizationLeader(session, organizationApplyId)){
+        if(!organizationService.isOrganizationLeader(session, organizationApply.getOrganizationId())){
             throw new AuthException(102, config.getExceptionsMap().get(102));
         }
         organizationApply.setStatus(2);
