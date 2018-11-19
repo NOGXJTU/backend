@@ -381,7 +381,7 @@ public class OrganizationController {
     @RequestMapping(value = "/join/refuse", method = RequestMethod.POST)
     public ResponseEntity refuseOrganizationApply(@RequestBody OrganizationApplyIdData data, HttpSession session) throws AuthException {
         String organizationApplyId = data.organizationApplyId;
-        if(Objects.isNull(organizationApplyId)){t
+        if(Objects.isNull(organizationApplyId)){
             throw new AuthException(1011, config.getExceptionsMap().get(1011));
         }
         Optional<OrganizationApply> organizationApplyFound = simpleDBService.findOneOrganizationApplyById(organizationApplyId);
