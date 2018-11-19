@@ -206,6 +206,20 @@ public class ActivityController {
 
 //  下面是Activity相关的操作
 
+    @ApiOperation(value = "批量获取指定活动Id的活动信息", notes = "传入活动IdList(activityIdList),成功时返回状态200返回活动详细信息,失败时返回状态以及错误信息")
+    @RequestMapping(value = "/batch", method = RequestMethod.POST)
+    public ResponseEntity getBatchActivity(@RequestBody ActivityIdListData data) throws BaseException {
+        List<String> activityIdList = data.activityIdList;
+        if(Objects.isNull(activityIdList)){
+            throw new AuthException(1011, config.getExceptionsMap().get(1011));
+        }
+        Stream<Activity> activityStream = simpleDBService.findAllActivityById(activityIdList);
+        if(Objects.isNull(activityStream)){
+            throw new AuthException(1044, config.getExceptionsMap().get(1044));
+        }
+        return new ResponseEntity(activityStream, HttpStatus.OK);
+    }
+
     @ApiOperation(value = "获取指定活动Id的活动信息", notes = "传入活动Id(activityId),成功时返回状态200返回活动详细信息,失败时返回状态以及错误信息")
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity getActivity(@RequestBody OnlyIdData data) throws BaseException {
