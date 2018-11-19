@@ -175,6 +175,16 @@
             <artifactId>aliyun-java-sdk-dm</artifactId>
             <version>3.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
         <!--分布式session-->
         <!--<dependency>-->
             <!--<groupId>org.springframework.session</groupId>-->

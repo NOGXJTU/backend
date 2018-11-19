@@ -363,16 +363,21 @@ public class OrganizationController {
         if(Objects.isNull(organizationApplyId)){
             throw new AuthException(1011, config.getExceptionsMap().get(1011));
         }
+        System.out.println(1);
         Optional<OrganizationApply> organizationApplyFound = simpleDBService.findOneOrganizationApplyById(organizationApplyId);
         if(!organizationApplyFound.isPresent()){
             throw new AuthException(1049, config.getExceptionsMap().get(1049));
         }
+        System.out.println(2);
         OrganizationApply organizationApply = organizationApplyFound.get();
         if(!organizationService.isOrganizationLeader(session, organizationApply.getOrganizationId())){
             throw new AuthException(102, config.getExceptionsMap().get(102));
         }
+        System.out.println(3);
         organizationApply.setStatus(1);
+        System.out.println(4);
         updateDBService.addUserOrganization(organizationApply.getUserId(), organizationApply.getOrganizationId());
+        System.out.println(5);
         return new ResponseEntity(simpleDBService.saveOrganizationApply(organizationApply), HttpStatus.OK);
     }
 
