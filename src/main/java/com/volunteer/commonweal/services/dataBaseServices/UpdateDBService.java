@@ -100,10 +100,13 @@ public class UpdateDBService {
         }else {
             throw new AuthException(105, config.getExceptionsMap().get(105));
         }
+        System.out.println(userId+"  "+organizationId);
+        System.out.println(6);
         Optional<Organization> organizationFound = organizationRepository.findOneById(organizationId);
         if(!organizationFound.isPresent()){
             throw new AuthException(1048, config.getExceptionsMap().get(1048));
         }
+        System.out.println(7);
         Organization organization = organizationFound.get();
         List<String> userList = organization.getUsers();
         if(!userList.contains(userId)){
