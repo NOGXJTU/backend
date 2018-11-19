@@ -1,6 +1,7 @@
 package com.volunteer.commonweal;
 
 
+import com.volunteer.commonweal.CommonwealApplication;
 import com.volunteer.commonweal.models.requestModels.homePageRequestModels.ActivityRequestModels.IdAndUserIdData;
 import com.volunteer.commonweal.models.requestModels.homePageRequestModels.ActivityRequestModels.IdAndUserListData;
 import com.volunteer.commonweal.models.requestModels.homePageRequestModels.ActivityRequestModels.OnlyIdData;
@@ -39,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CommonwealApplication.class)
 @SpringBootConfiguration
-public class testDemoA45 {
+public class testDemoA31 {
     private MockMvc mockMvc;
     private static MvcResult mvcResult;
     private static MockHttpSession session;
@@ -51,10 +52,10 @@ public class testDemoA45 {
             MediaType.APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));
 
-    private  String passport = "leader1";//username or phone or email
-    private  String password = "123456789";
+    private  String passport = "PHYLLIS";//username or phone or email
+    private  String password = "lx1114048173";
     private LoginData uData = new LoginData();
-    //Admin login
+    //leader login
     @Before
     public void  login() throws Exception{
         this.mockMvc = webAppContextSetup(webApplicationContext).build();//加载上下文
@@ -63,7 +64,7 @@ public class testDemoA45 {
         uData.passport = this.passport;
         uData.password = this.password;
         System.out.println("userSignIn验证接口测试");
-        System.out.println("组员登陆");
+        System.out.println("组长登陆");
         System.out.println("passport:" + uData.passport);
         System.out.println("password:" + uData.password);
         mvcResult = mockMvc.perform(post("/user/signIn")
@@ -77,17 +78,16 @@ public class testDemoA45 {
         System.out.println("userSignIn验证接口测试完毕");
     }
 
-
-
-    //testA45_1 team member modify activity's status
+    //testA29 team leader add  exited member
     @Test
-    public void testA45_1() throws Exception{
-        OnlyIdData OID = new OnlyIdData();
-        OID.activityId = "5b4dde2a7ddc6193188cef14";
-        System.out.println("transferActivityOwner验证接口测试");
+    public void testA31() throws Exception{
+        IdAndUserIdData IAUD = new IdAndUserIdData();
+        IAUD.activityId="5bf02946ccf2b97bc37e3037";
+        IAUD.userId="5bed36d5ccf2b952894b1280";
+        System.out.println("addexistedMember验证接口测试");
         try {
-            mockMvc.perform(post("/activity/status/modify")
-                    .contentType(contentType).content(json(OID))
+            mockMvc.perform(post("/activity/addMember")
+                    .contentType(contentType).content(json(IAUD))
                     .session(session))
                     .andDo(print())
                     .andExpect(status().isForbidden())
@@ -95,46 +95,10 @@ public class testDemoA45 {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("transferActivityOwner验证接口测试完毕");
-
+        System.out.println("addexistedMember验证接口测试完毕");
     }
-    //testA45_2 team member modify another activity's status
-    @Test
-    public void testA45_2() throws Exception{
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();//加载上下文
-        mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
-
-        uData.passport = "member4";
-        uData.password = this.password;
-        System.out.println("userSignIn验证接口测试");
-        System.out.println("组员登陆");
-        System.out.println("passport:" + uData.passport);
-        System.out.println("password:" + uData.password);
-        mvcResult = mockMvc.perform(post("/user/signIn")
-                .contentType(contentType).content(json(uData)))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.superUser",is(false)))
-                .andReturn();
-        session = (MockHttpSession) mvcResult
-                .getRequest().getSession();
-        System.out.println("userSignIn验证接口测试完毕");
-
-        OnlyIdData OID = new OnlyIdData();
-        OID.activityId = "5b4db6c0c93dcfd8fe351dfc";
-        System.out.println("transferActivityOwner验证接口测试");
-        try {
-            mockMvc.perform(post("/activity/status/modify")
-                    .contentType(contentType).content(json(OID))
-                    .session(session))
-                    .andDo(print())
-                    .andExpect(status().isForbidden())
-                    .andReturn();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("transferActivityOwner验证接口测试完毕");
-
+    @After
+    public  void logout() throws  Exception{
         System.out.println("userSignOut验证接口测试");
         try {
             mockMvc.perform(put("/user/signOut")
@@ -146,11 +110,6 @@ public class testDemoA45 {
             e.printStackTrace();
         }
         System.out.println("userSignOut验证接口测试完毕");
-    }
-
-
-    @After
-    public  void logout() throws  Exception{
     }
 
     //Json化

@@ -54,7 +54,7 @@ public class testDemoA29 {
     private  String passport = "PHYLLIS";//username or phone or email
     private  String password = "lx1114048173";
     private LoginData uData = new LoginData();
-    //Admin login
+    //leader login
     @Before
     public void  login() throws Exception{
         this.mockMvc = webAppContextSetup(webApplicationContext).build();//加载上下文
@@ -77,15 +77,16 @@ public class testDemoA29 {
         System.out.println("userSignIn验证接口测试完毕");
     }
 
-    //testA44_1 team leader modify his own activity's status
+    //testA29 team leader add member
     @Test
-    public void testA49_1() throws Exception{
-        OnlyIdData OID = new OnlyIdData();
-        OID.activityId = "5bf024b1ccf2b97bc37e3035";
-        System.out.println("transferActivityOwner验证接口测试");
+    public void testA29() throws Exception{
+        IdAndUserIdData IAUD = new IdAndUserIdData();
+        IAUD.activityId="5bf02946ccf2b97bc37e3037";
+        IAUD.userId="5bed36d5ccf2b952894b0080";
+        System.out.println("addMember验证接口测试");
         try {
-            mockMvc.perform(post("/activity/status/modify")
-                    .contentType(contentType).content(json(OID))
+            mockMvc.perform(post("/activity/addMember")
+                    .contentType(contentType).content(json(IAUD))
                     .session(session))
                     .andDo(print())
                     .andExpect(status().isOk())
@@ -93,26 +94,7 @@ public class testDemoA29 {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("transferActivityOwner验证接口测试完毕");
-    }
-
-    //testA44_2 team leader modify another activity's status
-    @Test
-    public void testA44_2() throws Exception{
-        OnlyIdData OID = new OnlyIdData();
-        OID.activityId = "5bef5cb7ccf2b952894b0088";
-        System.out.println("transferActivityOwner验证接口测试");
-        try {
-            mockMvc.perform(post("/activity/status/modify")
-                    .contentType(contentType).content(json(OID))
-                    .session(session))
-                    .andDo(print())
-                    .andExpect(status().isForbidden())
-                    .andReturn();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("transferActivityOwner验证接口测试完毕");
+        System.out.println("addMember验证接口测试完毕");
     }
     @After
     public  void logout() throws  Exception{

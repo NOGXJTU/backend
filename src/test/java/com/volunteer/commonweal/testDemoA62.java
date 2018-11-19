@@ -57,23 +57,7 @@ public class testDemoA62 {
     //Admin login
     @Before
     public void  login() throws Exception{
-//        this.mockMvc = webAppContextSetup(webApplicationContext).build();//加载上下文
-//        mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
-//        uData.passport = "adminuser1";
-//        uData.password = "adminuser1";
-//        System.out.println("userSignIn验证接口测试");
-//        System.out.println("管理员登陆");
-//        System.out.println("passport:" + uData.passport);
-//        System.out.println("password:" + uData.password);
-//        mvcResult = mockMvc.perform(post("/user/signIn")
-//                .contentType(contentType).content(json(uData)))
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.superUser",is(true)))
-//                .andReturn();
-//        session = (MockHttpSession) mvcResult
-//                .getRequest().getSession();
-//        System.out.println("userSignIn验证接口测试完毕");
+
     }
     //testA47 admin get information from pointed activity
     @Test
