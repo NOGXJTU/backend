@@ -42,7 +42,7 @@ public class OrganizationService {
         }
         Optional<Organization> organization = simpleDBService.findOneOrganizationById(organizationId);
         if(!organization.isPresent()){
-            throw new AuthException(1043, config.getExceptionsMap().get(1048));
+            throw new AuthException(1048, config.getExceptionsMap().get(1048));
         }
         return organization.get().getLeaderId().equals(userId.get());
     }

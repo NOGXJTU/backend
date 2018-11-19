@@ -56,6 +56,10 @@ public class SimpleDBService {
     }
 
     //activity的操作
+    public Stream<Activity> findAllActivityById(List<String> idList){
+        return activityRepository.findAllById(idList);
+    }
+
     public Optional<Activity> findOneActivityByActivityId(String id){
         return activityRepository.findOneById(id);
     }
@@ -276,6 +280,10 @@ public class SimpleDBService {
     }
 
     //organization的操作
+    public Stream<Organization> findAllOrganizationById(List<String> idList){
+        return organizationRepository.findAllById(idList);
+    }
+
     public Optional<Organization> findOneOrganizationById(String id){
         return organizationRepository.findOneById(id);
     }
