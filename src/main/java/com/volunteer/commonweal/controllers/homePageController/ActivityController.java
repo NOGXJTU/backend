@@ -476,6 +476,9 @@ public class ActivityController {
         if(!activityService.isGroupOwner(session, activityId)){
             throw new AuthException(102, config.getExceptionsMap().get(102));
         }
+        if(!simpleDBService.findOneUserById(userId).isPresent()){
+            throw new AuthException(1042 ,config.getExceptionsMap().get(1042));
+        }
         Optional<Activity> activityFound = simpleDBService.findOneActivityByActivityId(activityId);
         if(!activityFound.isPresent()){
             throw new AuthException(1043, config.getExceptionsMap().get(1043));

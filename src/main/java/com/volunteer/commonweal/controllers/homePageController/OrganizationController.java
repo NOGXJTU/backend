@@ -94,7 +94,7 @@ public class OrganizationController {
 
     //同意申请(同意后即创建组织)
     @ApiOperation(value = "同意组织申请", notes = "")
-    @RequestMapping(value = "/foundation/refuse", method = RequestMethod.POST)
+    @RequestMapping(value = "/foundation/agree", method = RequestMethod.POST)
     public ResponseEntity agreeOrganizationFoundation(@RequestBody OrganizationFoundationIdData data, HttpSession session) throws AuthException {
         String organizationFoundationId = data.organizationFoundationId;
         if(Objects.isNull(organizationFoundationId)){
@@ -128,7 +128,7 @@ public class OrganizationController {
 
     //拒绝申请
     @ApiOperation(value = "拒绝组织申请", notes = "")
-    @RequestMapping(value = "/foundation/agree", method = RequestMethod.POST)
+    @RequestMapping(value = "/foundation/refuse", method = RequestMethod.POST)
     public ResponseEntity refuseOrganizationFoundation(@RequestBody OrganizationFoundationIdData data, HttpSession session) throws AuthException {
         String organizationFoundationId = data.organizationFoundationId;
         if(Objects.isNull(organizationFoundationId)){
