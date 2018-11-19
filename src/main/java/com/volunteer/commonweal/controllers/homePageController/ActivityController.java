@@ -482,6 +482,9 @@ public class ActivityController {
         }
         Activity activity = activityFound.get();
         List<String> userIdList = activity.getUsers();
+        if(userIdList.contains(userId)){
+            throw new AuthException(1051, config.getExceptionsMap().get(1051));
+        }
         userIdList.add(userId);
         return new ResponseEntity(simpleDBService.saveActivity(activity), HttpStatus.OK);
     }
