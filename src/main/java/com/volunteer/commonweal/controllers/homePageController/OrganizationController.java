@@ -389,7 +389,7 @@ public class OrganizationController {
             throw new AuthException(1049, config.getExceptionsMap().get(1049));
         }
         OrganizationApply organizationApply = organizationApplyFound.get();
-        if(!organizationService.isOrganizationLeader(session, organizationApplyId)){
+        if(!organizationService.isOrganizationLeader(session, organizationApply.getOrganizationId())){
             throw new AuthException(102, config.getExceptionsMap().get(102));
         }
         organizationApply.setStatus(2);
