@@ -76,6 +76,9 @@ public class ApplicationController {
             throw new AuthException(1043, config.getExceptionsMap().get(1043));
         }
 
+        if (activity.get().isFinished()){
+            throw new AuthException(1071, config.getExceptionsMap().get(1071));
+        }
         //用户已经参加这个活动
         if(userFound.get().getActivitiesId().contains(activityId)){
             throw new AuthException(1051, config.getExceptionsMap().get(1051));
