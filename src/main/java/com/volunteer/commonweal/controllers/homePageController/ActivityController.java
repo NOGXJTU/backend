@@ -433,6 +433,9 @@ public class ActivityController {
             throw new AuthException(1043, config.getExceptionsMap().get(1043));
         }
         Activity activity = activityFound.get();
+        if (activity.getOwnerId().equals(userId)){
+            throw new AuthException(1023, config.getExceptionsMap().get(1023));
+        }
         List<String> userIdList = activity.getUsers();
         if(!userIdList.contains(userId)){
             throw new AuthException(1045, config.getExceptionsMap().get(1045));
@@ -458,6 +461,11 @@ public class ActivityController {
             throw new AuthException(102, config.getExceptionsMap().get(102));
         }
         Activity activity = activityFound.get();
+        for (String id:userIdGroup){
+            if(activity.getOwnerId().equals(id)){
+                throw new AuthException(1023, config.getExceptionsMap().get(1023));
+            }
+        }
         List<String> userIdList = activity.getUsers();
         userIdList.removeAll(userIdGroup);
         updateDBService.removeUserGroupActivity(userIdList, activityId);

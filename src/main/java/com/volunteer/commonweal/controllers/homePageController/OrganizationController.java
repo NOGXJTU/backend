@@ -464,6 +464,9 @@ public class OrganizationController {
         if(Objects.isNull(organizationId)){
             throw new AuthException(1011, config.getExceptionsMap().get(1011));
         }
+        if(organizationService.isOrganizationLeader(session,organizationId)){
+            throw new AuthException(1024, config.getExceptionsMap().get(1024));
+        }
         if (!userId.isPresent()){
             throw new AuthException(1021, config.getExceptionsMap().get(1021));
         }
