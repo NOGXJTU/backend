@@ -78,13 +78,13 @@ public class testDemoA31 {
         System.out.println("userSignIn验证接口测试完毕");
     }
 
-    //testA29 team leader add  exited member
+    //testA31 team leader add  iilegal member
     @Test
     public void testA31() throws Exception{
         IdAndUserIdData IAUD = new IdAndUserIdData();
         IAUD.activityId="5bf02946ccf2b97bc37e3037";
         IAUD.userId="5bed36d5ccf2b952894b1280";
-        System.out.println("addexistedMember验证接口测试");
+        System.out.println("addadd  iilegal ember验证接口测试");
         try {
             mockMvc.perform(post("/activity/addMember")
                     .contentType(contentType).content(json(IAUD))
@@ -95,7 +95,7 @@ public class testDemoA31 {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("addexistedMember验证接口测试完毕");
+        System.out.println("addadd  iilegal Member验证接口测试完毕");
     }
     @After
     public  void logout() throws  Exception{

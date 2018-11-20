@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CommonwealApplication.class)
 @SpringBootConfiguration
-public class testDemoA45 {
+public class testDemoA43 {
     private MockMvc mockMvc;
     private static MvcResult mvcResult;
     private static MockHttpSession session;
@@ -51,61 +51,25 @@ public class testDemoA45 {
             MediaType.APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));
 
-    private  String passport = "icarus";//username or phone or email
-    private  String password = "123456789";
+    private  String passport = "PHYLLIS";//username or phone or email
+    private  String password = "LX1114048173";
     private LoginData uData = new LoginData();
-    //member login
+
     @Before
     public void  login() throws Exception{
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();//加载上下文
-        mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
-
-        uData.passport = this.passport;
-        uData.password = this.password;
-        System.out.println("userSignIn验证接口测试");
-        System.out.println("组员登陆");
-        System.out.println("passport:" + uData.passport);
-        System.out.println("password:" + uData.password);
-        mvcResult = mockMvc.perform(post("/user/signIn")
-                .contentType(contentType).content(json(uData)))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.superUser",is(false)))
-                .andReturn();
-        session = (MockHttpSession) mvcResult
-                .getRequest().getSession();
-        System.out.println("userSignIn验证接口测试完毕");
-    }
-
-
-
-    //testA45_1 team member modify activity's status
-    @Test
-    public void testA45_1() throws Exception{
-        OnlyIdData OID = new OnlyIdData();
-        OID.activityId = "5bf024b1ccf2b97bc37e3035";
-        System.out.println("transferActivityOwner验证接口测试");
-        try {
-            mockMvc.perform(post("/activity/status/modify")
-                    .contentType(contentType).content(json(OID))
-                    .session(session))
-                    .andDo(print())
-                    .andExpect(status().isForbidden())
-                    .andReturn();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("transferActivityOwner验证接口测试完毕");
 
     }
-    //testA45_2 team member modify another activity's status
+
+
+
+    //testA43_1 team member try to transfer his team to another member
     @Test
-    public void testA45_2() throws Exception{
+    public void testA43_1() throws Exception{
         this.mockMvc = webAppContextSetup(webApplicationContext).build();//加载上下文
         mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
 
         uData.passport = "icarus";
-        uData.password = this.password;
+        uData.password = "123456789";
         System.out.println("userSignIn验证接口测试");
         System.out.println("组员登陆");
         System.out.println("passport:" + uData.passport);
@@ -120,12 +84,13 @@ public class testDemoA45 {
                 .getRequest().getSession();
         System.out.println("userSignIn验证接口测试完毕");
 
-        OnlyIdData OID = new OnlyIdData();
-        OID.activityId = "5bef5cb7ccf2b952894b0088";
+        IdAndUserIdData IAUID = new IdAndUserIdData();
+        IAUID.activityId = "5bf024b1ccf2b97bc37e3035";
+        IAUID.userId = "5bf1804cccf2b97bc37e3040";
         System.out.println("transferActivityOwner验证接口测试");
         try {
-            mockMvc.perform(post("/activity/status/modify")
-                    .contentType(contentType).content(json(OID))
+            mockMvc.perform(post("/activity/transfer")
+                    .contentType(contentType).content(json(IAUID))
                     .session(session))
                     .andDo(print())
                     .andExpect(status().isForbidden())
@@ -148,9 +113,60 @@ public class testDemoA45 {
         System.out.println("userSignOut验证接口测试完毕");
     }
 
+    //testA43_2 team member try to transfer his team to himself/herself
+    @Test
+    public void testA43_2() throws Exception{
+        this.mockMvc = webAppContextSetup(webApplicationContext).build();//加载上下文
+        mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+
+        uData.passport = "icarus";
+        uData.password = "123456789";
+        System.out.println("userSignIn验证接口测试");
+        System.out.println("组员登陆");
+        System.out.println("passport:" + uData.passport);
+        System.out.println("password:" + uData.password);
+        mvcResult = mockMvc.perform(post("/user/signIn")
+                .contentType(contentType).content(json(uData)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.superUser",is(false)))
+                .andReturn();
+        session = (MockHttpSession) mvcResult
+                .getRequest().getSession();
+        System.out.println("userSignIn验证接口测试完毕");
+
+        IdAndUserIdData IAUID = new IdAndUserIdData();
+        IAUID.activityId = "5bf024b1ccf2b97bc37e3035";
+        IAUID.userId = "5bed36d5ccf2b952894b0080";
+        System.out.println("transferActivityOwner验证接口测试");
+        try {
+            mockMvc.perform(post("/activity/transfer")
+                    .contentType(contentType).content(json(IAUID))
+                    .session(session))
+                    .andDo(print())
+                    .andExpect(status().isForbidden())
+                    .andReturn();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("transferActivityOwner验证接口测试完毕");
+
+        System.out.println("userSignOut验证接口测试");
+        try {
+            mockMvc.perform(put("/user/signOut")
+                    .session(session))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("userSignOut验证接口测试完毕");
+    }
 
     @After
     public  void logout() throws  Exception{
+
     }
 
     //Json化

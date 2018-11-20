@@ -89,7 +89,7 @@ public class testDemoA30 {
                     .contentType(contentType).content(json(IAUD))
                     .session(session))
                     .andDo(print())
-                    .andExpect(status().isOk())
+                    .andExpect(status().isForbidden())
                     .andReturn();
         } catch (Exception e) {
             e.printStackTrace();
